@@ -6,7 +6,7 @@ WORKDIR /app
 
 # 3. Instalar Tesseract OCR y el paquete de idioma español a nivel de sistema operativo
 RUN apt-get update && \
-    apt-get install -y tesseract-ocr tesseract-ocr-spa && \
+    apt-get install -y tesseract-ocr tesseract-ocr-spa poppler-utils && \
     rm -rf /var/lib/apt/lists/*
 
 # 4. Copiar las dependencias de Python e instalarlas
