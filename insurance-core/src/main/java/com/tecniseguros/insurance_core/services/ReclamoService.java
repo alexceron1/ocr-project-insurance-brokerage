@@ -41,7 +41,7 @@ public class ReclamoService {
     @Transactional
     public Reclamo procesarNuevoReclamo(MultipartFile archivoPdf) {
         // 1. Llamada al microservicio de Python
-        String pythonApiUrl = "http://ocr-service:8000/procesar"; // "http://localhost:8000/api/extract";
+        String pythonApiUrl = "https://ocr-project-insurance-brokerage.onrender.com"; //"http://ocr-service:8000/procesar"; // "http://localhost:8000/api/extract";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         
