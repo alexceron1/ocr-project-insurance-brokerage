@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  # 1. El contenedor de la Base de Datos
+  db:
+    image: postgres:15
+    container_name: tecniseguros-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Chimichanga123adentro
+      POSTGRES_DB: insurance_brokerage
+    ports:
+      - "5433:5432" # Usamos 5433 para que no choque con tu Postgres de Linux
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - tecniseguros-net
+
+  # 2. El contenedor del Motor de IA (Python)
+  ocr-service:
+    build: ./ocr-service  # <-- Cambia esto por el nombre de tu carpeta
+    container_name: tecniseguros-ocr
+    ports:
+      - "8000:8000"
+    networks:
+      - tecniseguros-net
+
+  # 3. El contenedor del Sistema Core y Frontend (Spring Boot)
+  core-service:
+    build: ./insurance-core  # <-- Asegúrate de que este sea el nombre de la carpeta de Java
+    container_name: tecniseguros-core
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    environment:
+      # Spring Boot es mágico y permite sobreescribir las propiedades de application.properties 
+      # usando variables de entorno. Aquí apuntamos a la BD usando el nombre del contenedor "db"
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/insurance_brokerage
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=Chimichanga123adentro
+      # ¡ESTA LÍNEA ES LA CURA! Sobrescribe el "validate" y crea las tablas en Docker
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    depends_on:
+      - db
+      - ocr-service
+    networks:
+      - tecniseguros-net
+
+# Declaración del volumen para que no se borren los datos si apagas la BD
+volumes:
+  postgres_data:
+
+# Declaración de la red interna
+networks:
+  tecniseguros-net:
