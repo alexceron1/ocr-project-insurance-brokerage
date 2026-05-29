@@ -72,7 +72,7 @@ def estructurar_datos_reclamo(texto_crudo):
                  
     return datos
 
-@app.post("/api/extract")
+@app.post("/procesar")
 async def extract_text(file: UploadFile = File(...)):
     try:
         # Leer los bytes del archivo PDF subido
